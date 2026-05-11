@@ -33,7 +33,7 @@ Fluxo para gerar o projeto nativo, compilar e instalar no emulador (package **`c
 1. **Node.js** (LTS) e **npm**.
 2. **Android Studio** com **Android SDK**, **Platform-Tools** e **Emulador** instalados (via SDK Manager).
 3. Pelo menos uma **imagem de sistema** (API) para criar um AVD.
-4. **JDK 17** para builds Gradle com Expo (recomendação oficial): no Android Studio, **Settings → Build, Execution, Deployment → Build Tools → Gradle → Gradle JDK** → escolha JDK 17; ou defina `JAVA_HOME` para um JDK 17 ao usar a linha de comando.
+4. **JDK** para o processo do Gradle: **17, 21 ou 26**. O projeto usa **Gradle 9.4.1** e **AGP 8.13.2**, o que permite rodar o daemon com **JDK 26** (sem o erro *Unsupported class file major version 70* do Gradle antigo). No Android Studio: **Settings → Build, Execution, Deployment → Build Tools → Gradle → Gradle JDK** → escolha o JDK instalado (ex.: **26**). Na linha de comando: `export JAVA_HOME=$(/usr/libexec/java_home -v 26)` (ou `-v 21` / `-v 17`). **Nota:** o **bytecode** do app Android continua em **Java 21** / Kotlin **jvmTarget 21** (compatível com Expo SDK 52 e React Native 0.76); isso é independente da versão do JDK que executa o Gradle.
 5. Variáveis de ambiente (ex.: `~/.zshrc` no macOS):
    - `ANDROID_HOME` apontando para o SDK (ex.: `~/Library/Android/sdk`).
    - Incluir no `PATH`: `$ANDROID_HOME/platform-tools` e `$ANDROID_HOME/emulator`.
