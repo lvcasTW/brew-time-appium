@@ -1,6 +1,6 @@
 # BrewTime — Cafeteria online + Appium
 
-Monorepo com **app mobile (React Native / Expo)** e **testes end-to-end (Appium + Python + pytest)** em Page Object Model, com exemplos para Allure, WebView, deep links e execução paralela.
+Monorepo com **app mobile (React Native / Expo)** e **automação** em três frentes: **mobile (Appium)**, **API (Karate DSL)** e **performance (k6)** — ver [`automation/README.md`](automation/README.md).
 
 ## App (`mobile/`)
 
@@ -85,70 +85,52 @@ Use o **mesmo** `applicationId` / `package` nas capabilities dos testes (`BREWTI
 
 ## Automação (`automation/`)
 
-Stack: **Python**, **Appium 2**, **pytest**, **pytest-xdist**, **Allure**, **Page Object Model**.
+| Pasta | Stack |
+|--------|--------|
+| [`automation/mobile-appium/`](automation/mobile-appium/) | Python, Appium 2, pytest, Page Objects, Allure |
+| [`automation/api-karate/`](automation/api-karate/) | Karate DSL, Maven, JUnit 5 |
+| [`automation/performance-k6/`](automation/performance-k6/) | Grafana k6 |
 
-### Setup
+Índice e detalhes: [`automation/README.md`](automation/README.md).
+
+### Mobile (Appium)
 
 ```bash
-cd automation
-python3 -m venv .venv
-source .venv/bin/activate
+cd automation/mobile-appium
+python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
-```
-
-Suba o **Appium 2** com driver UiAutomator2 e um emulador/dispositivo Android. Veja variáveis em [`automation/env.example`](automation/env.example).
-
-### Rodar testes
-
-Na pasta `automation/`:
-
-```bash
 pytest tests/ -v
 ```
 
-Por marcador:
+Variáveis: [`automation/mobile-appium/env.example`](automation/mobile-appium/env.example). Suba **Appium 2** (UiAutomator2) e o emulador/dispositivo.
+
+Por marcador: `pytest -m level1 tests/` (e `level2`, `level3`). Paralelo: `pytest -n 2 tests/`. Allure: `pytest tests/ --alluredir=allure-results`.
+
+`adb` no `PATH` para deep links (`utils/deeplink.py`). `testID` no RN mapeia a **Accessibility ID** no Appium.
+
+### API (Karate)
 
 ```bash
-pytest -m level1 tests/
-pytest -m level2 tests/
-pytest -m level3 tests/
+cd automation/api-karate
+mvn test
 ```
 
-### Allure
+### Performance (k6)
 
 ```bash
-pytest tests/ --alluredir=allure-results
-allure serve allure-results
+cd automation/performance-k6
+k6 run scripts/brewtime-smoke.js
 ```
-
-### Paralelo (dois emuladores)
-
-1. Suba dois AVDs (ex.: `emulator-5554` e `emulator-5556`).
-2. Ajuste `BREWTIME_UDID_GW0` / `BREWTIME_UDID_GW1` se necessário.
-3. Execute:
-
-```bash
-pytest -n 2 tests/
-```
-
-Cada worker recebe um UDID distinto em `conftest.py`.
-
-### Deep link nos testes
-
-O teste usa `adb` com o UDID da sessão (`utils/deeplink.py`). Exija `adb` no `PATH` e permissão de depuração USB no dispositivo.
-
-### Mapeamento de seletores
-
-No React Native, `testID` aparece como **Accessibility ID** no Appium (preferencial). Há um exemplo de **XPath** em `tests/test_level1_fundamentos.py` apenas para estudo — evite em produção.
 
 ## Estrutura
 
 ```
-mobile/           # Expo + React Navigation
+mobile/
 automation/
-  pages/          # Page Objects
-  tests/          # Nível 1, 2 e 3
-  utils/          # adb / deep link
+  README.md
+  mobile-appium/   # pytest, pages, tests, config, utils
+  api-karate/      # pom.xml, features Karate, runner JUnit
+  performance-k6/ # scripts k6
 ```
 
 ## Licença
