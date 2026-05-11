@@ -24,12 +24,62 @@ npm install
 npx expo start
 ```
 
-Para instalar no emulador Android (build nativo com o package `com.brewtime.app`, necessário para Appium):
+### Build e execução no emulador Android (Android Studio)
+
+Fluxo para gerar o projeto nativo, compilar e instalar no emulador (package **`com.brewtime.app`**, alinhado aos testes Appium).
+
+#### Pré-requisitos
+
+1. **Node.js** (LTS) e **npm**.
+2. **Android Studio** com **Android SDK**, **Platform-Tools** e **Emulador** instalados (via SDK Manager).
+3. Pelo menos uma **imagem de sistema** (API) para criar um AVD.
+4. **JDK 17** para builds Gradle com Expo (recomendação oficial): no Android Studio, **Settings → Build, Execution, Deployment → Build Tools → Gradle → Gradle JDK** → escolha JDK 17; ou defina `JAVA_HOME` para um JDK 17 ao usar a linha de comando.
+5. Variáveis de ambiente (ex.: `~/.zshrc` no macOS):
+   - `ANDROID_HOME` apontando para o SDK (ex.: `~/Library/Android/sdk`).
+   - Incluir no `PATH`: `$ANDROID_HOME/platform-tools` e `$ANDROID_HOME/emulator`.
+
+#### 1. Criar e iniciar o emulador
+
+1. Abra o **Android Studio** → **Device Manager**.
+2. **Create Device** → escolha um perfil de hardware → **Next**.
+3. Escolha uma **System Image** (faça **Download** se necessário) → **Next** → **Finish**.
+4. Inicie o AVD com o botão **Run** e mantenha o emulador aberto.
+
+#### 2. Instalar dependências e buildar no emulador
+
+Com o emulador **ligado**:
 
 ```bash
 cd mobile
+npm install
 npx expo run:android
 ```
+
+Na primeira execução, o Expo cria a pasta `android/`, compila o app e instala no emulador.
+
+Se existir mais de um dispositivo ou emulador conectado:
+
+```bash
+npx expo run:android --device
+```
+
+e selecione o alvo na lista.
+
+#### 3. Bundler (Metro) em desenvolvimento
+
+Após o primeiro `npx expo run:android`, o Metro costuma subir junto. Se precisar só do bundler:
+
+```bash
+cd mobile
+npx expo start
+```
+
+Para alterações **nativas**, use de novo `npx expo run:android` conforme a documentação do Expo.
+
+#### Conferência
+
+- O app instalado deve usar o package **`com.brewtime.app`**.
+- Conta demo: `demo@brewtime.app` / `brew123`.
 
 Use o **mesmo** `applicationId` / `package` nas capabilities dos testes (`BREWTIME_APP_PACKAGE`).
 
